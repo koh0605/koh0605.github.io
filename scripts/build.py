@@ -90,20 +90,10 @@ def cosense_to_html(lines, all_titles):
             html_lines.append('<div class="empty-line"></div>')
             continue
 
-        # インデントあり → 直前が外部リンクなら引用ブロック、それ以外は箇条書き
+        # インデントあり → 箇条書き
         if indent > 0:
             text = convert_inline(text, all_titles)
-            # 直前の行が外部リンク（<p>内に<a>タグ）だった場合は引用ブロックとして扱う
-            if html_lines and re.search(r'<a href="https?://', html_lines[-1]):
-                # 直前のリンク行を引用元として引用ブロックに統合
-                prev = html_lines.pop()
-                # <p>タグを除去してリンク部分だけ取り出す
-                cite = re.sub(r'</?p>', '', prev)
-                html_lines.append(
-                    f'<figure class="quote-block">'                    f'<blockquote>{text}</blockquote>'                    f'<figcaption>出典: {cite}</figcaption>'                    f'</figure>'
-                )
-            else:
-                html_lines.append(f'<li style="margin-left:{indent*1.5}em">{text}</li>')
+            html_lines.append(f'<li style="margin-left:{indent*1.5}em">{text}</li>')
             continue
 
         # 見出し（[]で囲まれた太字）
@@ -112,6 +102,20 @@ def cosense_to_html(lines, all_titles):
             level = min(len(heading_match.group(1)), 3)
             content = convert_inline(heading_match.group(2), all_titles)
             html_lines.append(f'<h{level+1}>{content}</h{level+1}>')
+            continue
+
+        # > で始まる行は引用
+        if text.startswith(">"):
+            quote_text = convert_inline(text[1:].strip(), all_titles)
+            # 直前の行が外部リンクを含むなら引用元として統合
+            if html_lines and re.search(r'<a href="https?://', html_lines[-1]):
+                prev = html_lines.pop()
+                cite = re.sub(r'</?p>', '', prev)
+                html_lines.append(
+                    f'<figure class="quote-block">'                    f'<blockquote>{quote_text}</blockquote>'                    f'<figcaption>出典: {cite}</figcaption>'                    f'</figure>'
+                )
+            else:
+                html_lines.append(f'<blockquote class="quote-simple">{quote_text}</blockquote>')
             continue
 
         # 通常テキスト
@@ -137,6 +141,14 @@ def convert_inline(text, all_titles):
         r'<a href="\1" target="_blank">\1</a>',
         text
     )
+    # 外部リンク（[]なし）: URL タイトル の形式
+    def bare_url_with_title(m):
+        url, title = m.group(1), m.group(2).strip()
+        label = title if title else url
+        return f'<a href="{url}" target="_blank">{label}</a>'
+    text = re.sub(r'(https?://\S+)\s+(.+)', bare_url_with_title, text)
+    # 外部リンク（[]なし・タイトルなし）
+    text = re.sub(r'(https?://\S+)', r'<a href="\1" target="_blank">\1</a>', text)
     # 内部リンク [ページ名] → 公開ページならリンク、そうでなければスパン
     def internal_link(m):
         title = m.group(1)
