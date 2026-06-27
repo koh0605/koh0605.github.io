@@ -90,10 +90,20 @@ def cosense_to_html(lines, all_titles):
             html_lines.append('<div class="empty-line"></div>')
             continue
 
-        # 箇条書き（インデントあり）
+        # インデントあり → 直前が外部リンクなら引用ブロック、それ以外は箇条書き
         if indent > 0:
             text = convert_inline(text, all_titles)
-            html_lines.append(f'<li style="margin-left:{indent*1.5}em">{text}</li>')
+            # 直前の行が外部リンク（<p>内に<a>タグ）だった場合は引用ブロックとして扱う
+            if html_lines and re.search(r'<a href="https?://', html_lines[-1]):
+                # 直前のリンク行を引用元として引用ブロックに統合
+                prev = html_lines.pop()
+                # <p>タグを除去してリンク部分だけ取り出す
+                cite = re.sub(r'</?p>', '', prev)
+                html_lines.append(
+                    f'<figure class="quote-block">'                    f'<blockquote>{text}</blockquote>'                    f'<figcaption>出典: {cite}</figcaption>'                    f'</figure>'
+                )
+            else:
+                html_lines.append(f'<li style="margin-left:{indent*1.5}em">{text}</li>')
             continue
 
         # 見出し（[]で囲まれた太字）
@@ -481,6 +491,31 @@ article span.unlinked { color: var(--text-muted); }
 .tag-page-list { list-style: none; }
 .tag-page-list li { margin-bottom: 0.5rem; }
 .tag-page-list a { color: var(--link); }
+
+/* ── 引用ブロック ── */
+figure.quote-block {
+  margin: 1.25rem 0;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-light);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 0.75rem 1rem;
+}
+
+figure.quote-block blockquote {
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+figure.quote-block figcaption {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+figure.quote-block figcaption a {
+  color: var(--accent);
+}
 
 /* ── レスポンシブ ── */
 @media (max-width: 700px) {
