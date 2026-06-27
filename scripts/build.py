@@ -135,7 +135,11 @@ def convert_inline(text, all_titles):
     text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
 
     # タグ #tag
-    text = re.sub(r'#(\S+)', r'<a href="tag-\1.html" class="tag">#\1</a>', text)
+    def tag_link(m):
+        t = m.group(1)
+        slug = urllib.parse.quote(t.replace("/", "-"), safe='')
+        return f'<a href="tag-{slug}.html" class="tag">#{t}</a>'
+    text = re.sub(r'#(\S+)', tag_link, text)
 
     return text
 
@@ -152,7 +156,7 @@ def extract_tags(lines):
 def render_page(title, body_html, tags, related, updated):
     """1ページ分のHTMLを生成"""
     tag_html = " ".join(
-        f'<a href="tag-{urllib.parse.quote(t)}.html" class="tag">#{t}</a>'
+        f'<a href="tag-{urllib.parse.quote(t.replace("/", "-"), safe="")}.html" class="tag">#{t}</a>'
         for t in tags if t != PUBLISH_TAG
     )
     related_html = ""
@@ -552,7 +556,7 @@ def build():
             continue
         tag_pages_info = [p for p in pages_info if p["title"] in titles]
         html = render_tag_page(tag, tag_pages_info)
-        slug = urllib.parse.quote(tag)
+        slug = urllib.parse.quote(tag.replace("/", "-"), safe='')
         (OUTPUT_DIR / f"tag-{slug}.html").write_text(html, encoding="utf-8")
 
     # トップページを生成
