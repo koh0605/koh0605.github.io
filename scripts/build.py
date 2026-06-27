@@ -209,10 +209,10 @@ def render_index(pages_info):
     """トップページ（一覧）を生成"""
     items = ""
     for p in sorted(pages_info, key=lambda x: x["updated"], reverse=True):
-        slug = urllib.parse.quote(p["title"])
+        slug = slugify(p["title"])
         date_str = datetime.fromtimestamp(p["updated"]).strftime("%Y.%m.%d") if p["updated"] else ""
         tags = " ".join(
-            f'<a href="tag-{urllib.parse.quote(t)}.html" class="tag">#{t}</a>'
+            f'<a href="tag-{urllib.parse.quote(t.replace("/", "-"), safe="")}.html" class="tag">#{t}</a>'
             for t in p["tags"] if t != PUBLISH_TAG
         )
         desc = p.get("descriptions", [""])[0] if p.get("descriptions") else ""
