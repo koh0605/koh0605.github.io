@@ -209,6 +209,31 @@ article span.unlinked { color: var(--text-muted); }
 .tag-page-list li { margin-bottom: 0.5rem; }
 .tag-page-list a { color: var(--link); }
 
+/* ── 引用ブロック ── */
+figure.quote-block {
+  margin: 1.25rem 0;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-light);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 0.75rem 1rem;
+}
+
+figure.quote-block blockquote {
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+figure.quote-block figcaption {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+figure.quote-block figcaption a {
+  color: var(--accent);
+}
+
 /* ── レスポンシブ ── */
 @media (max-width: 700px) {
   .layout {
