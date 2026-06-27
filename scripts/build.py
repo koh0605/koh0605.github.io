@@ -5,6 +5,12 @@ import urllib.request
 import urllib.parse
 from pathlib import Path
 from datetime import datetime
+import hashlib
+
+def slugify(title):
+    """タイトルを安全なファイル名に変換（ハッシュ使用）"""
+    h = hashlib.md5(title.encode()).hexdigest()[:8]
+    return h
 
 # ── 設定 ──────────────────────────────────────────────
 PROJECT = "kohpriv"
@@ -125,7 +131,7 @@ def convert_inline(text, all_titles):
     def internal_link(m):
         title = m.group(1)
         if title in all_titles:
-            slug = urllib.parse.quote(title)
+            slug = slugify(title)
             return f'<a href="{slug}.html" class="internal-link">{title}</a>'
         else:
             return f'<span class="unlinked">{title}</span>'
@@ -242,7 +248,7 @@ def render_tag_page(tag, pages_info):
     """タグページを生成"""
     items = ""
     for p in pages_info:
-        slug = urllib.parse.quote(p["title"])
+        slug = slugify(p["title"])
         items += f'<li><a href="{slug}.html">{p["title"]}</a></li>\n'
     return f"""<!DOCTYPE html>
 <html lang="ja">
@@ -547,7 +553,7 @@ def build():
 
         body_html = cosense_to_html(page["lines"], all_titles)
         html = render_page(title, body_html, tags, related, page.get("updated", 0))
-        slug = urllib.parse.quote(title)
+        slug = slugify(title)
         (OUTPUT_DIR / f"{slug}.html").write_text(html, encoding="utf-8")
 
     # タグページを生成
