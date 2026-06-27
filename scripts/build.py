@@ -38,7 +38,7 @@ def get_all_pages():
 
 def get_page_detail(title):
     """ページの詳細（本文）を取得"""
-    encoded = urllib.parse.quote(title)
+    encoded = urllib.parse.quote(title, safe='')
     url = f"https://scrapbox.io/api/pages/{PROJECT}/{encoded}"
     return fetch(url)
 
@@ -502,7 +502,11 @@ def build():
     print(f"🔍 #{PUBLISH_TAG} タグのページを絞り込み中...")
     publish_pages = []
     for p in all_pages:
-        detail = get_page_detail(p["title"])
+        try:
+            detail = get_page_detail(p["title"])
+        except Exception as e:
+            print(f"   ⚠ スキップ: {p['title']} ({e})")
+            continue
         if has_publish_tag(detail):
             publish_pages.append(detail)
             print(f"   ✓ {p['title']}")
