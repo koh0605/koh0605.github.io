@@ -1,0 +1,225 @@
+
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --border: #e8e4de;
+  --text: #2d2a26;
+  --text-muted: #8a8480;
+  --accent: #5b7fa6;
+  --accent-light: #eef2f7;
+  --tag-bg: #f0ede8;
+  --tag-text: #5a5550;
+  --link: #5b7fa6;
+  --link-internal: #2d6a4f;
+  --radius: 6px;
+  --font: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  font-size: 16px;
+}
+
+/* ── レイアウト ── */
+.layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.index-layout {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* ── サイドバー ── */
+.sidebar {
+  padding: 2rem 1.25rem;
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.home-link {
+  display: block;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.home-link:hover { color: var(--accent); }
+
+/* ── メインコンテンツ ── */
+.content {
+  padding: 2.5rem 3rem;
+  max-width: 760px;
+}
+
+/* ── ページヘッダー ── */
+.page-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.date { color: var(--text-muted); font-size: 0.85rem; }
+
+/* ── 本文 ── */
+article p {
+  margin-bottom: 1rem;
+}
+
+article h2, article h3, article h4 {
+  font-weight: 700;
+  margin: 1.75rem 0 0.5rem;
+  line-height: 1.4;
+}
+
+article h2 { font-size: 1.3rem; }
+article h3 { font-size: 1.1rem; }
+
+article li {
+  margin-bottom: 0.4rem;
+  list-style: disc;
+}
+
+article pre {
+  background: #f4f1ec;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+article a { color: var(--link); text-decoration: underline; }
+article a.internal-link { color: var(--link-internal); }
+article a.internal-link:hover { background: #e8f4ee; border-radius: 3px; }
+article span.unlinked { color: var(--text-muted); }
+
+.empty-line { height: 0.6rem; }
+
+/* ── タグ ── */
+.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+.tag {
+  display: inline-block;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  border-radius: 999px;
+  padding: 0.15rem 0.7rem;
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+.tag:hover { background: var(--accent-light); color: var(--accent); }
+
+/* ── 関連ページ ── */
+.related { margin-top: 1.5rem; }
+.related h3 {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.related ul { list-style: none; }
+.related li { margin-bottom: 0.4rem; }
+.related a {
+  font-size: 0.9rem;
+  color: var(--text);
+  text-decoration: none;
+  display: block;
+  padding: 0.2rem 0.4rem;
+  border-radius: var(--radius);
+}
+.related a:hover { background: var(--accent-light); color: var(--accent); }
+
+/* ── トップページ ── */
+.site-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.site-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.page-card {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-card:last-child { border-bottom: none; }
+
+.page-card-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.page-card h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.page-card h2 a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.page-card h2 a:hover { color: var(--accent); }
+
+.page-card .desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.tag-page-list { list-style: none; }
+.tag-page-list li { margin-bottom: 0.5rem; }
+.tag-page-list a { color: var(--link); }
+
+/* ── レスポンシブ ── */
+@media (max-width: 700px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem;
+  }
+  .content { padding: 1.5rem 1rem; }
+}
