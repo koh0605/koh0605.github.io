@@ -1,0 +1,34 @@
+name: Cosenseから公開サイトを生成
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # 毎時0分に自動実行
+  workflow_dispatch:        # 手動実行ボタンも使える
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Pythonをセットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: サイトをビルド
+        env:
+          COSENSE_SID: ${{ secrets.COSENSE_SID }}
+        run: python scripts/build.py
+
+      - name: docsフォルダをコミット・プッシュ
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          git diff --staged --quiet || git commit -m "サイトを更新 $(date +'%Y-%m-%d %H:%M')"
+          git push
