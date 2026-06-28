@@ -167,6 +167,10 @@ def convert_inline(text, all_titles):
     # タグ #tag
     def tag_link(m):
         t = m.group(1)
+        if t == PUBLISH_TAG:
+            return ""  # 公開タグは表示しない
+        if re.match(r'^\d{4}[/-]\d{2}[/-]\d{2}$', t):
+            return ""  # 日付タグは表示しない
         slug = urllib.parse.quote(t.replace("/", "-"), safe='')
         return f'<a href="tag-{slug}.html" class="tag">#{t}</a>'
     text = re.sub(r'#(\S+)', tag_link, text)
@@ -187,7 +191,7 @@ def render_page(title, body_html, tags, related, updated):
     """1ページ分のHTMLを生成"""
     tag_html = " ".join(
         f'<a href="tag-{urllib.parse.quote(t.replace("/", "-"), safe="")}.html" class="tag">#{t}</a>'
-        for t in tags if t != PUBLISH_TAG
+        for t in tags if t != PUBLISH_TAG and not re.match(r'^\d{4}[/-]\d{2}[/-]\d{2}$', t)
     )
     related_html = ""
     if related:
@@ -237,7 +241,7 @@ def render_index(pages_info):
         date_str = datetime.fromtimestamp(p["updated"]).strftime("%Y.%m.%d") if p["updated"] else ""
         tags = " ".join(
             f'<a href="tag-{urllib.parse.quote(t.replace("/", "-"), safe="")}.html" class="tag">#{t}</a>'
-            for t in p["tags"] if t != PUBLISH_TAG
+            for t in p["tags"] if t != PUBLISH_TAG and not re.match(r'^\d{4}[/-]\d{2}[/-]\d{2}$', t)
         )
         desc = p.get("descriptions", [""])[0] if p.get("descriptions") else ""
         items += f"""
@@ -587,6 +591,10 @@ def build():
             "descriptions": page.get("descriptions", []),
         })
         for tag in tags:
+            if tag == PUBLISH_TAG:
+                continue
+            if re.match(r'^\d{4}[/-]\d{2}[/-]\d{2}$', tag):
+                continue
             tag_map.setdefault(tag, []).append(page["title"])
 
     # 各ページのHTMLを生成
