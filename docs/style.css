@@ -209,6 +209,49 @@ article span.unlinked { color: var(--text-muted); }
 .tag-page-list li { margin-bottom: 0.5rem; }
 .tag-page-list a { color: var(--link); }
 
+/* ── 月別一覧 ── */
+.month-group { margin-bottom: 1.5rem; }
+
+.month-heading {
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: var(--text);
+  color: var(--bg);
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius);
+  margin-bottom: 0.5rem;
+}
+
+.month-list {
+  list-style: none;
+  padding: 0 0.25rem;
+}
+
+.month-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.month-list li:last-child { border-bottom: none; }
+
+.list-date {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  min-width: 2.5rem;
+  flex-shrink: 0;
+}
+
+.month-list a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.month-list a:hover { text-decoration: underline; }
+
 /* ── 引用ブロック ── */
 figure.quote-block {
   margin: 1.25rem 0;
