@@ -196,7 +196,7 @@ def render_page(title, body_html, tags, related, updated):
     related_html = ""
     if related:
         links = "\n".join(
-            f'<li><a href="{urllib.parse.quote(r)}.html">{r}</a></li>'
+            f'<li><a href="{slugify(r)}.html">{r}</a></li>'
             for r in related
         )
         related_html = f'<section class="related"><h3>関連ページ</h3><ul>{links}</ul></section>'
