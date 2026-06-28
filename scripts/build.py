@@ -265,13 +265,13 @@ def render_index(pages_info):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>公開ノート</title>
+<title>KKN[Koh‐Kai Note]</title>
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 <div class="index-layout">
   <header class="site-header">
-    <h1 class="site-title">公開ノート</h1>
+    <h1 class="site-title">KKN[Koh‐Kai Note]</h1>
   </header>
   <main class="index-main">
 {items}
