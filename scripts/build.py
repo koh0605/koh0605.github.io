@@ -234,23 +234,30 @@ def render_page(title, body_html, tags, related, updated):
 </html>"""
 
 def render_index(pages_info):
-    """トップページ（一覧）を生成"""
+    """トップページ（月別一覧）を生成"""
+    from collections import defaultdict
+
+    sorted_pages = sorted(pages_info, key=lambda x: x["updated"], reverse=True)
+
+    # 月ごとにグループ化
+    by_month = defaultdict(list)
+    for p in sorted_pages:
+        if p["updated"]:
+            month_key = datetime.fromtimestamp(p["updated"]).strftime("%Y年%m月")
+            month_sort = datetime.fromtimestamp(p["updated"]).strftime("%Y%m")
+        else:
+            month_key = "日付なし"
+            month_sort = "000000"
+        by_month[(month_sort, month_key)].append(p)
+
     items = ""
-    for p in sorted(pages_info, key=lambda x: x["updated"], reverse=True):
-        slug = slugify(p["title"])
-        date_str = datetime.fromtimestamp(p["updated"]).strftime("%Y.%m.%d") if p["updated"] else ""
-        tags = " ".join(
-            f'<a href="tag-{urllib.parse.quote(t.replace("/", "-"), safe="")}.html" class="tag">#{t}</a>'
-            for t in p["tags"] if t != PUBLISH_TAG and not re.match(r'^\d{4}[/-]\d{2}[/-]\d{2}$', t)
-        )
-        desc = p.get("descriptions", [""])[0] if p.get("descriptions") else ""
-        items += f"""
-<article class="page-card">
-  <div class="page-card-meta">{date_str}</div>
-  <h2><a href="{slug}.html">{p["title"]}</a></h2>
-  {f'<p class="desc">{desc}</p>' if desc else ''}
-  <div class="tags">{tags}</div>
-</article>"""
+    for (month_sort, month_label) in sorted(by_month.keys(), reverse=True):
+        items += f'<div class="month-group"><h2 class="month-heading">{month_label}</h2><ul class="month-list">\n'
+        for p in by_month[(month_sort, month_label)]:
+            slug = slugify(p["title"])
+            day_str = datetime.fromtimestamp(p["updated"]).strftime("%m/%d") if p["updated"] else ""
+            items += f'<li><span class="list-date">{day_str}</span><a href="{slug}.html">{p["title"]}</a></li>\n'
+        items += "</ul></div>\n"
 
     return f"""<!DOCTYPE html>
 <html lang="ja">
@@ -509,6 +516,49 @@ article span.unlinked { color: var(--text-muted); }
 .tag-page-list { list-style: none; }
 .tag-page-list li { margin-bottom: 0.5rem; }
 .tag-page-list a { color: var(--link); }
+
+/* ── 月別一覧 ── */
+.month-group { margin-bottom: 1.5rem; }
+
+.month-heading {
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: var(--text);
+  color: var(--bg);
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius);
+  margin-bottom: 0.5rem;
+}
+
+.month-list {
+  list-style: none;
+  padding: 0 0.25rem;
+}
+
+.month-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.month-list li:last-child { border-bottom: none; }
+
+.list-date {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  min-width: 2.5rem;
+  flex-shrink: 0;
+}
+
+.month-list a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.month-list a:hover { text-decoration: underline; }
 
 /* ── 引用ブロック ── */
 figure.quote-block {
