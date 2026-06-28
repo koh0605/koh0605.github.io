@@ -82,6 +82,14 @@ def cosense_to_html(lines, all_titles):
                 html_lines.append(text[1:].replace("&","&amp;").replace("<","&lt;"))
                 continue
 
+        # 「URL タイトル」形式の行を先に検出（[]なし外部リンク）
+        bare_link_match = re.match(r'^(https?://\S+)\s+(.+)$', text.strip())
+        if bare_link_match:
+            url = bare_link_match.group(1)
+            title = bare_link_match.group(2).strip()
+            html_lines.append(f'<p><a href="{url}" target="_blank">{title}</a></p>')
+            continue
+
         # インデントレベル
         indent = len(text) - len(text.lstrip())
         text = text.strip()
@@ -141,13 +149,7 @@ def convert_inline(text, all_titles):
         r'<a href="\1" target="_blank">\1</a>',
         text
     )
-    # 外部リンク（[]なし）: URL タイトル の形式
-    def bare_url_with_title(m):
-        url, title = m.group(1), m.group(2).strip()
-        label = title if title else url
-        return f'<a href="{url}" target="_blank">{label}</a>'
-    text = re.sub(r'(https?://\S+)\s+(.+)', bare_url_with_title, text)
-    # 外部リンク（[]なし・タイトルなし）
+    # 外部リンク（[]なし・タイトルなし）- []ありは上で処理済み
     text = re.sub(r'(https?://\S+)', r'<a href="\1" target="_blank">\1</a>', text)
     # 内部リンク [ページ名] → 公開ページならリンク、そうでなければスパン
     def internal_link(m):
