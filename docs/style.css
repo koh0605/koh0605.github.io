@@ -23,6 +23,7 @@ body {
   color: var(--text);
   line-height: 1.8;
   font-size: 16px;
+  overflow-x: hidden;
 }
 
 /* ── レイアウト ── */
@@ -65,6 +66,22 @@ body {
 .content {
   padding: 2.5rem 3rem;
   max-width: 760px;
+}
+
+/* ── モバイル戻るリンク ── */
+.mobile-back {
+  display: none;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .mobile-back {
+    display: block;
+  }
 }
 
 /* ── ページヘッダー ── */
@@ -259,6 +276,8 @@ figure.quote-block {
   background: var(--accent-light);
   border-radius: 0 var(--radius) var(--radius) 0;
   padding: 0.75rem 1rem;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 figure.quote-block blockquote {
@@ -266,15 +285,20 @@ figure.quote-block blockquote {
   font-size: 0.95rem;
   line-height: 1.7;
   margin-bottom: 0.5rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 figure.quote-block figcaption {
   font-size: 0.8rem;
   color: var(--text-muted);
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 
 figure.quote-block figcaption a {
   color: var(--accent);
+  word-break: break-all;
 }
 
 /* ── レスポンシブ ── */
@@ -283,11 +307,7 @@ figure.quote-block figcaption a {
     grid-template-columns: 1fr;
   }
   .sidebar {
-    position: static;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-    padding: 1rem;
+    display: none;
   }
   .content { padding: 1.5rem 1rem; }
 }
